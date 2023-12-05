@@ -13,8 +13,6 @@ Your task is to implement this hashmap, apply the given queries, and to find the
  */
 
 
-// why the fuck cant i just clone the map this is stupid i hate leetcode bullshit
-// no fucking clue how to make this faster
 class CustomMapHandler {
     
   public myMap = new Map<number, number>();
@@ -54,6 +52,7 @@ class CustomMapHandler {
 
 
 function solution(queryType: string[], query: number[][]): number {
+    // note to self: failed two testcases on efficiency
   const mapHandler = new CustomMapHandler();
   let sum = 0;
   let iteration = 0;

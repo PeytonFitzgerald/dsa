@@ -14,69 +14,73 @@ Your task is to implement this hashmap, apply the given queries, and to find the
 
 
 class CustomMapHandler {
-    
-  public myMap = new Map<number, number>();
-  private keys = new Set<number>();
-  private cum_k = 0;
-  private key_sums = new Map<number, number>();
-  private cur_operation = 0;
-  private operation_val_sums = new Map<number, number>();
-  private operations_when_added = new Map<number, number>();
-  
-  public addToKey(num: number) {
-      this.cum_k += num;
-  }
-  
-  public addToValue(num: number) {
-      this.cur_operation++;
-      this.operation_val_sums.set(this.cur_operation, num);
-  }
-  
-  public insert(x: number, y: number) {
-      const adjustedKey = x - this.cum_k;
-      this.keys.add(adjustedKey);
-      this.operations_when_added.set(adjustedKey, this.cur_operation);
-      return this.myMap.set(adjustedKey, y);
-  }
-  
-  public getMapValue(key: number) {
-      const adjustedKey = key - this.cum_k;
-      let sum = 0;
-      for (let i = this.cur_operation; i > this.operations_when_added.get(adjustedKey); i--) {
-          sum += this.operation_val_sums.get(i);
-      }
-      return this.myMap.get(adjustedKey) + sum;
-  }
-  
+
+    public myMap = new Map<number, number>();
+    private keys = new Set<number>();
+    private cum_k = 0;
+    private key_sums = new Map<number, number>();
+    private cur_operation = 0;
+    private operation_val_sums = new Map<number, number>();
+    private operations_when_added = new Map<number, number>();
+
+    public addToKey(num: number) {
+        this.cum_k += num;
+    }
+
+    public addToValue(num: number) {
+        this.cur_operation++;
+        this.operation_val_sums.set(this.cur_operation, num);
+    }
+
+    public insert(x: number, y: number) {
+        const adjustedKey = x - this.cum_k;
+        this.keys.add(adjustedKey);
+        this.operations_when_added.set(adjustedKey, this.cur_operation);
+        return this.myMap.set(adjustedKey, y);
+    }
+
+    public getMapValue(key: number) {
+        const adjustedKey = key - this.cum_k;
+        const baseVal = this.myMap.get(adjustedKey) ?? 0;
+        let adjustedSum = 0;
+        const operations = this.operations_when_added.get(adjustedKey);
+        if (operations)
+            for (let i = this.cur_operation; i > operations; i--) {
+                const adjustment = this.operation_val_sums.get(i);
+                adjustedSum += adjustment ?? 0;
+            }
+        return baseVal  + adjustedSum;
+    }
+
 }
 
 
 function solution(queryType: string[], query: number[][]): number {
     // note to self: failed two testcases on efficiency
-  const mapHandler = new CustomMapHandler();
-  let sum = 0;
-  let iteration = 0;
-  for (const q of queryType) {
-      switch (q) {
-          case 'insert':
-              mapHandler.insert(query[iteration][0], query[iteration][1])
-              break;
-          case 'get':
-              const value = mapHandler.getMapValue(query[iteration][0]);
-              if (value) {
-                  sum += value;
-              }
-              break;
-          case 'addToValue':
-              mapHandler.addToValue(query[iteration][0])
-              break;
-          case 'addToKey':
-              mapHandler.addToKey(query[iteration][0])
-              break;
-          default:
-              break;
-      }
-      iteration++;
-  }
-  return sum;
+    const mapHandler = new CustomMapHandler();
+    let sum = 0;
+    let iteration = 0;
+    for (const q of queryType) {
+        switch (q) {
+            case 'insert':
+                mapHandler.insert(query[iteration][0], query[iteration][1])
+                break;
+            case 'get':
+                const value = mapHandler.getMapValue(query[iteration][0]);
+                if (value) {
+                    sum += value;
+                }
+                break;
+            case 'addToValue':
+                mapHandler.addToValue(query[iteration][0])
+                break;
+            case 'addToKey':
+                mapHandler.addToKey(query[iteration][0])
+                break;
+            default:
+                break;
+        }
+        iteration++;
+    }
+    return sum;
 }

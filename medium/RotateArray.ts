@@ -32,6 +32,9 @@ function rotate(nums: number[], k: number): void {
             end--;
         }
     }
+    // need to correct for an edge case here
+    // as k can be > nums.length, apparently
+    k = k % nums.length;
     // First we reverse the entire array
     // this moves the tricky elements at the end of the array 
     // closer to the position they need to end up in 
